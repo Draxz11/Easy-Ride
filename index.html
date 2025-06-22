@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Ride</title>
+    <link rel="icon" href="Img/Easy Ride Favicon.png">
+    <meta name="description" content="Sistema de transporte colaborativo com otimização de rotas baseada em confirmação de presença em tempo real.">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header Styles */
+        .header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .nav-desktop {
+            display: none;
+            gap: 2rem;
+        }
+
+        .nav-desktop a {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-desktop a:hover {
+            color: #2563eb;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #2563eb;
+            border: 1px solid #2563eb;
+        }
+
+        .btn-outline:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Landing Page Styles */
+        .hero {
+            background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+            padding: 5rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+        }
+
+        .hero .highlight {
+            color: #2563eb;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #6b7280;
+            margin-bottom: 2rem;
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .features {
+            padding: 5rem 0;
+            background: white;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.25rem;
+            font-weight: bold;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 3rem;
+            height: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card .subtitle {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .how-it-works {
+            padding: 5rem 0;
+            background: #f9fafb;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 2.25rem;
+            font-weight: bold;
+            margin-bottom: 3rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            background: #2563eb;
+            color: white;
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+
+        .step h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .cta {
+            padding: 5rem 0;
+            background: #2563eb;
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 2.25rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .footer {
+            background: #1f2937;
+            color: white;
+            padding: 3rem 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #9ca3af;
+            text-decoration: none;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 2rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            background: #f9fafb;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-value.green { color: #16a34a; }
+        .stat-value.yellow { color: #ca8a04; }
+        .stat-value.red { color: #dc2626; }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-description {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .passenger-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .passenger-info h3 {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .passenger-info .address {
+            font-size: 0.875rem;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .passenger-info .phone {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-yellow {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Passenger Page Styles */
+        .passenger-page {
+            background: #f9fafb;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .welcome-section {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h2 {
+            font-size: 2.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirmation-card {
+            border: 2px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .confirmation-card.pending {
+            background: #fffbeb;
+            border-color: #f59e0b;
+        }
+
+        .confirmation-card.confirmed {
+            background: #f0fdf4;
+            border-color: #22c55e;
+        }
+
+        .confirmation-card.declined {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .confirmation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .confirmation-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .info-item.blue { background: #eff6ff; }
+        .info-item.green { background: #f0fdf4; }
+        .info-item.purple { background: #faf5ff; }
+
+        .info-icon {
+            width: 2rem;
+            height: 2rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        .info-icon.blue { color: #2563eb; }
+        .info-icon.green { color: #16a34a; }
+        .info-icon.purple { color: #9333ea; }
+
+        .weekly-schedule {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .day-item {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .day-item.inactive {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .day-item.active {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        .day-item:hover {
+            background: #e5e7eb;
+        }
+
+        .day-item.active:hover {
+            background: #bfdbfe;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .nav-desktop {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 4rem;
+            }
+
+            .main-content {
+                grid-template-columns: 2fr 1fr;
+            }
+
+            .confirmation-buttons {
+                flex-wrap: nowrap;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+
+            .hero {
+                padding: 3rem 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .features, .how-it-works, .cta {
+                padding: 3rem 0;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .confirmation-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden { display: none; }
+        .text-center { text-align: center; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .w-full { width: 100%; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo" onclick="showPage('home')">
+                    <i data-lucide="route"></i>
+                    Easy Ride
+                </a>
+                <nav class="nav-desktop">
+                    <a href="#features">Funcionalidades</a>
+                    <a href="#how-it-works">Como Funciona</a>
+                    <a href="#" onclick="showPage('dashboard')">Dashboard</a>
+                </nav>
+                <div class="header-buttons">
+                    <button class="btn btn-outline" onclick="showPage('passenger')">Sou Passageiro</button>
+                    <button class="btn btn-primary" onclick="showPage('dashboard')">Sou Motorista</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <div id="home" class="page-section active">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Transporte Inteligente e <span class="highlight">Colaborativo</span></h1>
+                <p>Otimize suas rotas de transporte com confirmação de presença em tempo real. Economize tempo, combustível e torne o transporte mais eficiente para todos.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="showPage('dashboard')">Começar Agora</button>
+                    <button class="btn btn-outline btn-lg" onclick="scrollToSection('how-it-works')">Saiba Mais</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Por que escolher o Easy Ride?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i data-lucide="check-circle" class="feature-icon" style="color: #16a34a;"></i>
+                        <h3>Confirmação Simples</h3>
+                        <p class="subtitle">Passageiros confirmam presença com apenas um clique</p>
+                        <p>Interface intuitiva para confirmar se vai ou não utilizar o transporte no dia.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="route" class="feature-icon" style="color: #2563eb;"></i>
+                        <h3>Rota Otimizada</h3>
+                        <p class="subtitle">Algoritmo inteligente para melhor percurso</p>
+                        <p>Calcula automaticamente a melhor rota baseada nos passageiros confirmados.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="clock" class="feature-icon" style="color: #ea580c;"></i>
+                        <h3>Economia de Tempo</h3>
+                        <p class="subtitle">Reduza tempo de viagem e custos</p>
+                        <p>Evite paradas desnecessárias e otimize o tempo de todos os envolvidos.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="users" class="feature-icon" style="color: #9333ea;"></i>
+                        <h3>Gestão de Passageiros</h3>
+                        <p class="subtitle">Controle completo da lista de usuários</p>
+                        <p>Cadastre e gerencie todos os passageiros com seus pontos de embarque.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="map-pin" class="feature-icon" style="color: #dc2626;"></i>
+                        <h3>Pontos Personalizados</h3>
+                        <p class="subtitle">Defina locais de embarque específicos</p>
+                        <p>Cada passageiro pode ter seu ponto de embarque personalizado no mapa.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i data-lucide="smartphone" class="feature-icon" style="color: #16a34a;"></i>
+                        <h3>100% Responsivo</h3>
+                        <p class="subtitle">Funciona perfeitamente em qualquer dispositivo</p>
+                        <p>Acesse de qualquer lugar: computador, tablet ou smartphone.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How it Works Section -->
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h2>Como Funciona</h2>
+                <div class="steps-grid">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Cadastre os Passageiros</h3>
+                        <p>Adicione os passageiros com seus nomes e pontos de embarque no sistema.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Confirmação Diária</h3>
+                        <p>Passageiros confirmam se vão utilizar o transporte através de um link simples.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Rota Automática</h3>
+                        <p>O sistema gera automaticamente a melhor rota baseada nas confirmações.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta">
+            <div class="container">
+                <h2>Pronto para otimizar seu transporte?</h2>
+                <p>Comece agora mesmo e veja a diferença que o Easy Ride pode fazer.</p>
+                <button class="btn btn-lg" style="background: white; color: #2563eb;" onclick="showPage('dashboard')">Começar Gratuitamente</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-section">
+                        <div class="flex items-center gap-2 mb-4">
+                            <i data-lucide="route" style="width: 1.5rem; height: 1.5rem;"></i>
+                            <span style="font-size: 1.25rem; font-weight: bold;">Easy Ride</span>
+                        </div>
+                        <p style="color: #9ca3af;">Transporte inteligente e colaborativo para todos.</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Produto</h4>
+                        <ul>
+                            <li><a href="#features">Funcionalidades</a></li>
+                            <li><a href="#how-it-works">Como Funciona</a></li>
+                            <li><a href="#" onclick="showPage('dashboard')">Dashboard</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Suporte</h4>
+                        <ul>
+                            <li><a href="#">Central de Ajuda</a></li>
+                            <li><a href="#">Contato</a></li>
+                            <li><a href="#">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Legal</h4>
+                        <ul>
+                            <li><a href="#">Privacidade</a></li>
+                            <li><a href="#">Termos</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Easy Ride. Todos os direitos reservados.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard" class="page-section">
+        <div class="dashboard">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">Dashboard do Motorista</h1>
+                    <p style="color: #6b7280;">Gerencie seus passageiros e otimize suas rotas</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Total de Passageiros</span>
+                            <i data-lucide="users" style="width: 1rem; height: 1rem; color: #6b7280;"></i>
+                        </div>
+                        <div class="stat-value" id="total-passengers">4</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Confirmados Hoje</span>
+                            <i data-lucide="check-circle" style="width: 1rem; height: 1rem; color: #16a34a;"></i>
+                        </div>
+                        <div class="stat-value green" id="confirmed-count">2</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Pendentes</span>
+                            <i data-lucide="clock" style="width: 1rem; height: 1rem; color: #ca8a04;"></i>
+                        </div>
+                        <div class="stat-value yellow" id="pending-count">1</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Não vão</span>
+                            <i data-lucide="x-circle" style="width: 1rem; height: 1rem; color: #dc2626;"></i>
+                        </div>
+                        <div class="stat-value red" id="declined-count">1</div>
+                    </div>
+                </div>
+
+                <div class="main-content">
+                    <!-- Passengers List -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h2 class="card-title">Lista de Passageiros</h2>
+                                    <p class="card-description">Gerencie todos os passageiros cadastrados</p>
+                                </div>
+                                <button class="btn btn-primary" onclick="openAddPassengerModal()">
+                                    <i data-lucide="plus" style="width: 1rem; height: 1rem;"></i>
+                                    Adicionar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div id="passengers-list">
+                                <!-- Passengers will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Route Actions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Ações da Rota</h3>
+                                <p class="card-description">Gerencie a rota de hoje</p>
+                            </div>
+                            <div class="card-content" style="display: flex; flex-direction: column; gap: 1rem;">
+                                <button class="btn btn-primary w-full btn-lg">
+                                    <i data-lucide="navigation" style="width: 1rem; height: 1rem;"></i>
+                                    Gerar Rota Otimizada
+                                </button>
+                                <button class="btn btn-outline w-full">
+                                    <i data-lucide="map-pin" style="width: 1rem; height: 1rem;"></i>
+                                    Ver no Mapa
+                                </button>
+                                <button class="btn btn-outline w-full">Enviar Lembretes</button>
+                            </div>
+                        </div>
+
+                        <!-- Today's Route -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Rota de Hoje</h3>
+                                <p class="card-description">Passageiros confirmados: <span id="route-count">2</span></p>
+                            </div>
+                            <div class="card-content">
+                                <div id="route-list">
+                                    <!-- Route will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Estatísticas</h3>
+                            </div>
+                            <div class="card-content">
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem;">
+                                    <div class="flex justify-between">
+                                        <span>Tempo estimado:</span>
+                                        <span style="font-weight: 500;">45 min</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Distância total:</span>
+                                        <span style="font-weight: 500;">28 km</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>Paradas:</span>
+                                        <span style="font-weight: 500;" id="stops-count">2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passenger Page -->
+    <div id="passenger" class="page-section">
+        <div class="passenger-page">
+            <div class="container" style="max-width: 64rem;">
+                <div class="welcome-section">
+                    <h2>Olá, <span id="passenger-name">Maria Silva</span>! 👋</h2>
+                    <p style="color: #6b7280;">Confirme sua presença para hoje e gerencie suas preferências de transporte.</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <!-- Main Content -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Confirmation Card -->
+                        <div class="card confirmation-card" id="confirmation-card">
+                            <div class="card-header">
+                                <div class="confirmation-header">
+                                    <div>
+                                        <h3 class="card-title flex items-center gap-2">
+                                            <i data-lucide="calendar" style="width: 1.25rem; height: 1.25rem;"></i>
+                                            Confirmação para Hoje
+                                        </h3>
+                                        <p class="card-description" style="margin-top: 0.5rem;" id="today-date"></p>
+                                    </div>
+                                    <div class="confirmation-status" id="confirmation-status">
+                                        <i data-lucide="clock" style="width: 1.5rem; height: 1.5rem; color: #ca8a04;"></i>
+                                        <span style="color: #ca8a04;">Aguardando confirmação</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; color: #6b7280; margin-bottom: 1rem;">
+                                    <i data-lucide="map-pin" style="width: 1rem; height: 1rem;"></i>
+                                    <span>Ponto de embarque: Rua das Flores, 123 - Centro</span>
+                                </div>
+                                <div class="confirmation-buttons" id="confirmation-buttons">
+                                    <button class="btn btn-success btn-lg" style="flex: 1;" onclick="confirmPresence()">
+                                        <i data-lucide="check-circle" style="width: 1.25rem; height: 1.25rem;"></i>
+                                        Sim, vou hoje!
+                                    </button>
+                                    <button class="btn btn-danger btn-lg" style="flex: 1;" onclick="declinePresence()">
+                                        <i data-lucide="x-circle" style="width: 1.25rem; height: 1.25rem;"></i>
+                                        Não vou hoje
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Route Information -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Informações da Rota</h3>
+                                <p class="card-description">Detalhes sobre o transporte de hoje</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="info-grid">
+                                    <div class="info-item blue">
+                                        <i data-lucide="clock" class="info-icon blue"></i>
+                                        <p style="font-size: 0.875rem; color: #6b7280;">Horário Previsto</p>
+                                        <p style="font-weight: 600;">07:30</p>
+                                    </div>
+                                    <div class="info-item green">
+                                        <i data-lucide="map-pin" class="info-icon green"></i>
+                                        <p style="font-size: 0.875rem; color: #6b7280;">Passageiros</p>
+                                        <p style="font-weight: 600;">3 confirmados</p>
+                                    </div>
+                                    <div class="info-item purple">
+                                        <i data-lucide="route" class="info-icon purple"></i>
+                                        <p style="font-size: 0.875rem; color: #6b7280;">Tempo Estimado</p>
+                                        <p style="font-weight: 600;">45 min</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weekly Schedule -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Minha Agenda Semanal</h3>
+                                <p class="card-description">Dias da semana que normalmente utilizo o transporte</p>
+                            </div>
+                            <div class="card-content">
+                                <div class="weekly-schedule" id="weekly-schedule">
+                                    <!-- Schedule will be populated by JavaScript -->
+                                </div>
+                                <p style="font-size: 0.875rem; color: #6b7280; margin-top: 1rem;">Clique nos dias para ativar/desativar sua agenda padrão</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Profile Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Meu Perfil</h3>
+                            </div>
+                            <div class="card-content" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <div>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">Nome</p>
+                                    <p style="font-weight: 500;">Maria Silva</p>
+                                </div>
+                                <div>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">Telefone</p>
+                                    <p style="font-weight: 500;">(11) 99999-1111</p>
+                                </div>
+                                <div>
+                                    <p style="font-size: 0.875rem; color: #6b7280;">Endereço</p>
+                                    <p style="font-weight: 500;">Rua das Flores, 123 - Centro</p>
+                                </div>
+                                <button class="btn btn-outline w-full" style="margin-top: 1rem;">Editar Perfil</button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Ações Rápidas</h3>
+                            </div>
+                            <div class="card-content" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <button class="btn btn-outline w-full" style="justify-content: flex-start;">
+                                    <i data-lucide="map-pin" style="width: 1rem; height: 1rem;"></i>
+                                    Ver Rota no Mapa
+                                </button>
+                                <button class="btn btn-outline w-full" style="justify-content: flex-start;">
+                                    <i data-lucide="calendar" style="width: 1rem; height: 1rem;"></i>
+                                    Histórico de Viagens
+                                </button>
+                                <button class="btn btn-outline w-full" style="justify-content: flex-start;">
+                                    Entrar em Contato
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Status History -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Últimas Confirmações</h3>
+                            </div>
+                            <div class="card-content" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <div class="flex justify-between items-center">
+                                    <span style="font-size: 0.875rem;">Ontem</span>
+                                    <span class="badge badge-green">Confirmado</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span style="font-size: 0.875rem;">Anteontem</span>
+                                    <span class="badge badge-green">Confirmado</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span style="font-size: 0.875rem;">3 dias atrás</span>
+                                    <span class="badge badge-red">Não foi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Passenger Modal -->
+    <div id="add-passenger-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Adicionar Novo Passageiro</h2>
+                <p style="color: #6b7280;">Preencha os dados do novo passageiro</p>
+            </div>
+            <form id="add-passenger-form">
+                <div class="form-group">
+                    <label class="form-label" for="passenger-name-input">Nome</label>
+                    <input type="text" id="passenger-name-input" class="form-input" placeholder="Nome completo" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="passenger-address-input">Endereço</label>
+                    <input type="text" id="passenger-address-input" class="form-input" placeholder="Endereço completo" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="passenger-phone-input">Telefone</label>
+                    <input type="tel" id="passenger-phone-input" class="form-input" placeholder="(11) 99999-9999" required>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeAddPassengerModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="addPassenger()">Adicionar Passageiro</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Sample data
+        let passengers = [
+            { id: 1, name: "Maria Silva", address: "Rua das Flores, 123", phone: "(11) 99999-1111", status: "confirmed" },
+            { id: 2, name: "João Santos", address: "Av. Principal, 456", phone: "(11) 99999-2222", status: "pending" },
+            { id: 3, name: "Ana Costa", address: "Rua do Centro, 789", phone: "(11) 99999-3333", status: "confirmed" },
+            { id: 4, name: "Pedro Lima", address: "Rua Nova, 321", phone: "(11) 99999-4444", status: "declined" }
+        ];
+
+        let weeklySchedule = {
+            monday: false,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true,
+            saturday: false,
+            sunday: false
+        };
+
+        let passengerStatus = "pending";
+
+        // Navigation functions
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update page-specific content
+            if (pageId === 'dashboard') {
+                updateDashboard();
+            } else if (pageId === 'passenger') {
+                updatePassengerPage();
+            }
+        }
+
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Dashboard functions
+        function updateDashboard() {
+            updateStats();
+            renderPassengersList();
+            renderRouteList();
+        }
+
+        function updateStats() {
+            const confirmed = passengers.filter(p => p.status === 'confirmed').length;
+            const pending = passengers.filter(p => p.status === 'pending').length;
+            const declined = passengers.filter(p => p.status === 'declined').length;
+
+            document.getElementById('total-passengers').textContent = passengers.length;
+            document.getElementById('confirmed-count').textContent = confirmed;
+            document.getElementById('pending-count').textContent = pending;
+            document.getElementById('declined-count').textContent = declined;
+            document.getElementById('route-count').textContent = confirmed;
+            document.getElementById('stops-count').textContent = confirmed;
+        }
+
+        function renderPassengersList() {
+            const container = document.getElementById('passengers-list');
+            container.innerHTML = '';
+
+            passengers.forEach(passenger => {
+                const passengerElement = document.createElement('div');
+                passengerElement.className = 'passenger-item';
+                
+                const statusBadge = getStatusBadge(passenger.status);
+                
+                passengerElement.innerHTML = `
+                    <div class="passenger-info">
+                        <h3>${passenger.name}</h3>
+                        <div class="address">
+                            <i data-lucide="map-pin" style="width: 1rem; height: 1rem;"></i>
+                            ${passenger.address}
+                        </div>
+                        <p class="phone">${passenger.phone}</p>
+                    </div>
+                    <div>${statusBadge}</div>
+                `;
+                
+                container.appendChild(passengerElement);
+            });
+            
+            lucide.createIcons();
+        }
+
+        function renderRouteList() {
+            const container = document.getElementById('route-list');
+            const confirmedPassengers = passengers.filter(p => p.status === 'confirmed');
+            
+            if (confirmedPassengers.length === 0) {
+                container.innerHTML = '<p style="color: #6b7280; font-size: 0.875rem; text-align: center; padding: 1rem;">Nenhum passageiro confirmado ainda</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            confirmedPassengers.forEach((passenger, index) => {
+                const routeItem = document.createElement('div');
+                routeItem.style.cssText = 'display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;';
+                
+                routeItem.innerHTML = `
+                    <div style="background: #2563eb; color: white; border-radius: 50%; width: 1.5rem; height: 1.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 500;">
+                        ${index + 1}
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-weight: 500; font-size: 0.875rem; margin-bottom: 0.125rem;">${passenger.name}</p>
+                        <p style="font-size: 0.75rem; color: #6b7280;">${passenger.address}</p>
+                    </div>
+                `;
+                
+                container.appendChild(routeItem);
+            });
+        }
+
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'confirmed':
+                    return '<span class="badge badge-green">Confirmado</span>';
+                case 'declined':
+                    return '<span class="badge badge-red">Não vai</span>';
+                case 'pending':
+                    return '<span class="badge badge-yellow">Pendente</span>';
+                default:
+                    return '<span class="badge">Desconhecido</span>';
+            }
+        }
+
+        // Modal functions
+        function openAddPassengerModal() {
+            document.getElementById('add-passenger-modal').classList.add('active');
+        }
+
+        function closeAddPassengerModal() {
+            document.getElementById('add-passenger-modal').classList.remove('active');
+            document.getElementById('add-passenger-form').reset();
+        }
+
+        function addPassenger() {
+            const name = document.getElementById('passenger-name-input').value;
+            const address = document.getElementById('passenger-address-input').value;
+            const phone = document.getElementById('passenger-phone-input').value;
+
+            if (name && address && phone) {
+                const newPassenger = {
+                    id: Date.now(),
+                    name: name,
+                    address: address,
+                    phone: phone,
+                    status: 'pending'
+                };
+
+                passengers.push(newPassenger);
+                updateDashboard();
+                closeAddPassengerModal();
+            }
+        }
+
+        // Passenger page functions
+        function updatePassengerPage() {
+            // Update today's date
+            const today = new Date().toLocaleDateString('pt-BR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('today-date').textContent = today;
+            
+            // Update confirmation status
+            updateConfirmationStatus();
+            
+            // Render weekly schedule
+            renderWeeklySchedule();
+        }
+
+        function updateConfirmationStatus() {
+            const card = document.getElementById('confirmation-card');
+            const status = document.getElementById('confirmation-status');
+            const buttons = document.getElementById('confirmation-buttons');
+            
+            card.className = 'card confirmation-card ' + passengerStatus;
+            
+            switch (passengerStatus) {
+                case 'confirmed':
+                    status.innerHTML = `
+                        <i data-lucide="check-circle" style="width: 1.5rem; height: 1.5rem; color: #16a34a;"></i>
+                        <span style="color: #16a34a;">Confirmado</span>
+                    `;
+                    buttons.innerHTML = `
+                        <button class="btn btn-outline" style="flex: 1;" onclick="resetConfirmation()">
+                            Alterar Confirmação
+                        </button>
+                    `;
+                    break;
+                case 'declined':
+                    status.innerHTML = `
+                        <i data-lucide="x-circle" style="width: 1.5rem; height: 1.5rem; color: #dc2626;"></i>
+                        <span style="color: #dc2626;">Não vou hoje</span>
+                    `;
+                    buttons.innerHTML = `
+                        <button class="btn btn-outline" style="flex: 1;" onclick="resetConfirmation()">
+                            Alterar Confirmação
+                        </button>
+                    `;
+                    break;
+                default:
+                    status.innerHTML = `
+                        <i data-lucide="clock" style="width: 1.5rem; height: 1.5rem; color: #ca8a04;"></i>
+                        <span style="color: #ca8a04;">Aguardando confirmação</span>
+                    `;
+                    buttons.innerHTML = `
+                        <button class="btn btn-success btn-lg" style="flex: 1;" onclick="confirmPresence()">
+                            <i data-lucide="check-circle" style="width: 1.25rem; height: 1.25rem;"></i>
+                            Sim, vou hoje!
+                        </button>
+                        <button class="btn btn-danger btn-lg" style="flex: 1;" onclick="declinePresence()">
+                            <i data-lucide="x-circle" style="width: 1.25rem; height: 1.25rem;"></i>
+                            Não vou hoje
+                        </button>
+                    `;
+            }
+            
+            lucide.createIcons();
+        }
+
+        function confirmPresence() {
+            passengerStatus = 'confirmed';
+            updateConfirmationStatus();
+        }
+
+        function declinePresence() {
+            passengerStatus = 'declined';
+            updateConfirmationStatus();
+        }
+
+        function resetConfirmation() {
+            passengerStatus = 'pending';
+            updateConfirmationStatus();
+        }
+
+        function renderWeeklySchedule() {
+            const container = document.getElementById('weekly-schedule');
+            const dayNames = {
+                monday: 'Seg',
+                tuesday: 'Ter',
+                wednesday: 'Qua',
+                thursday: 'Qui',
+                friday: 'Sex',
+                saturday: 'Sáb',
+                sunday: 'Dom'
+            };
+            
+            container.innerHTML = '';
+            
+            Object.entries(weeklySchedule).forEach(([day, active]) => {
+                const dayElement = document.createElement('div');
+                dayElement.className = `day-item ${active ? 'active' : 'inactive'}`;
+                dayElement.onclick = () => toggleDay(day);
+                
+                dayElement.innerHTML = `
+                    <p style="font-size: 0.875rem; font-weight: 500; margin-bottom: 0.25rem;">${dayNames[day]}</p>
+                    ${active ? '<i data-lucide="check-circle" style="width: 1rem; height: 1rem; margin: 0 auto;"></i>' : ''}
+                `;
+                
+                container.appendChild(dayElement);
+            });
+            
+            lucide.createIcons();
+        }
+
+        function toggleDay(day) {
+            weeklySchedule[day] = !weeklySchedule[day];
+            renderWeeklySchedule();
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('add-passenger-modal');
+            if (event.target === modal) {
+                closeAddPassengerModal();
+            }
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            updateDashboard();
+            updatePassengerPage();
+        });
+
+        // Handle responsive navigation
+        window.addEventListener('resize', function() {
+            // Add any responsive behavior here if needed
+        });
+    </script>
+</body>
+</html>
